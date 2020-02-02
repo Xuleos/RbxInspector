@@ -610,6 +610,8 @@ if not __LEMUR__ then
 	ReplicatedFirst = game:GetService("ReplicatedFirst")
 end
 
+--was changed indicates change made by us
+
 local TS = {}
 
 -- runtime classes
@@ -666,9 +668,11 @@ function TS.getModule(object, moduleName)
 		warn("roblox-ts packages should not be used from ReplicatedFirst!")
 	end
 
+	--was changed
 	-- ensure modules have fully replicated
 	if not __LEMUR__ and RunService:IsClient() and not isPlugin(object) and not game:IsLoaded() then
-		game.Loaded:Wait()
+		warn("waitin")
+		--game.Loaded:Wait()
 	end
 
 	local globalModules = script.Parent:FindFirstChild("node_modules")
@@ -732,8 +736,9 @@ function TS.import(caller, module, ...)
 	end
 
 	if not registeredLibraries[module] then
+		--was changed
 		if _G[module] then
-			error("Invalid module access! Do you have two TS runtimes trying to import this? " .. module:GetFullName(), 2)
+			warn("Invalid module access! Do you have two TS runtimes trying to import this? " .. module:GetFullName(), 2)
 		end
 
 		_G[module] = TS
@@ -4604,7 +4609,7 @@ return strict</string>
       <Properties>
         <string name="Name">TS</string>
         <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 1, 2020, 7:46 PM Eastern Standard Time
+-- February 2, 2020, 12:03 AM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
@@ -4634,11 +4639,13 @@ end);
           <Properties>
             <string name="Name">app</string>
             <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 1, 2020, 7:46 PM Eastern Standard Time
+-- February 2, 2020, 12:03 AM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local List = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "list").default;
+local Card = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "card").default;
 local App;
 do
 	App = Roact.PureComponent:extend("App");
@@ -4653,7 +4660,17 @@ do
 				Size = UDim2.new(1, 0, 1, 0),
 				Visible = true,
 			},
-			self.props[Roact.Children]
+			{
+				Roact.createElement(
+					List,
+					{},
+					{
+						Roact.createElement(Card),
+						Roact.createElement(Card),
+						Roact.createElement(Card),
+					}
+				),
+			}
 		);
 	end;
 end;
@@ -4664,9 +4681,69 @@ return exports;
         </Item>
         <Item class="ModuleScript" referent="48">
           <Properties>
+            <string name="Name">app.story</string>
+            <string name="Source">local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+
+return function(target)
+    local App = require(script.Parent.app)
+
+    local element = Roact.createElement(App.default, {},{})
+    local mount = Roact.mount(element, target)
+
+    return function()
+        Roact.unmount(mount)
+    end
+end</string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="49">
+          <Properties>
+            <string name="Name">card</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 2, 2020, 12:03 AM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local Card;
+do
+	Card = Roact.PureComponent:extend("Card");
+	function Card:render()
+		return Roact.createElement(
+			"Frame",
+			{
+				ZIndex = 2,
+				Size = UDim2.new(1, 0, 0, 200),
+				BackgroundTransparency = 1,
+			},
+			{
+				Roact.createElement(
+					"TextLabel",
+					{
+						Size = UDim2.new(0.6, 0, 0, 25),
+						Position = UDim2.new(0, 5, 0, 0),
+						BorderSizePixel = 0,
+						TextScaled = true,
+						TextXAlignment = Enum.TextXAlignment.Left,
+						BackgroundTransparency = 1,
+						TextColor3 = Color3.fromRGB(222, 222, 222),
+					}
+				),
+			}
+		);
+	end;
+end;
+exports.default = Card;
+return exports;
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="50">
+          <Properties>
             <string name="Name">grid</string>
             <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 1, 2020, 7:25 PM Eastern Standard Time
+-- February 1, 2020, 7:55 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
@@ -4683,11 +4760,11 @@ return exports;
 ]]></string>
           </Properties>
         </Item>
-        <Item class="ModuleScript" referent="49">
+        <Item class="ModuleScript" referent="51">
           <Properties>
             <string name="Name">list</string>
             <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 1, 2020, 7:25 PM Eastern Standard Time
+-- February 1, 2020, 10:38 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
@@ -4696,7 +4773,19 @@ local List;
 do
 	List = Roact.PureComponent:extend("List");
 	function List:render()
-		return nil;
+		return Roact.createFragment(
+						TS.Roact_combine(
+				{
+					Roact.createElement(
+						"UIListLayout",
+						{
+							HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						}
+					),
+				},
+				self.props[Roact.Children]
+			)
+		);
 	end;
 end;
 exports.default = List;
@@ -4704,26 +4793,6 @@ return exports;
 ]]></string>
           </Properties>
         </Item>
-      </Item>
-      <Item class="ModuleScript" referent="50">
-        <Properties>
-          <string name="Name">app.story</string>
-          <string name="Source">-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 1, 2020, 7:46 PM Eastern Standard Time
-
-local TS = require(game:GetService("ReplicatedStorage"):FindFirstChild("include"):FindfirstChild("RuntimeLib"));
-local exports;
-local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
-local app = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "app").default;
-
-exports = function(target)
-	local mount = Roact.mount(Roact.createElement(app, {}), target);
-	return function()
-		Roact.unmount(mount);
-	end;
-end;
-return exports;</string>
-        </Properties>
       </Item>
     </Item>
   </Item>

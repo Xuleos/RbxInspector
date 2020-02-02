@@ -1,5 +1,6 @@
 import Roact from "@rbxts/roact";
-
+import List from "./list";
+import Card from "./card";
 export default class App extends Roact.PureComponent<{}> {
 	render(): Roact.Element {
 		const theme = settings().Studio.Theme;
@@ -12,7 +13,11 @@ export default class App extends Roact.PureComponent<{}> {
 				Size={new UDim2(1, 0, 1, 0)}
 				Visible={true}
 			>
-				{this.props[Roact.Children]}
+				<List>
+					<Card />
+					<Card />
+					<Card />
+				</List>
 			</frame>
 		);
 	}
