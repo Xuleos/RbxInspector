@@ -3,7 +3,7 @@
     <Properties>
       <string name="Name">roblox-ts-model</string>
       <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.include.RuntimeLib);
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
@@ -29,11 +29,84 @@ end);
       <Properties>
         <string name="Name">Components</string>
       </Properties>
-      <Item class="ModuleScript" referent="2">
+      <Item class="Folder" referent="2">
+        <Properties>
+          <string name="Name">PropertyTypes</string>
+        </Properties>
+        <Item class="ModuleScript" referent="3">
+          <Properties>
+            <string name="Name">propertyName</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 3, 2020, 6:48 PM Eastern Standard Time
+
+local TS = require(script.Parent.Parent.Parent.include.RuntimeLib);
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local PropertyName;
+do
+	PropertyName = Roact.PureComponent:extend("PropertyName");
+	function PropertyName:render()
+		return Roact.createElement(
+			"TextLabel",
+			{
+				Size = UDim2.new(0, 100, 0, self.props.Height),
+				Text = "Property",
+				TextScaled = true,
+				TextColor3 = Color3.fromRGB(185, 185, 185),
+				BackgroundTransparency = 1,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			},
+			{
+				Roact.createElement(
+					"UITextSizeConstraint",
+					{
+						MaxTextSize = 9,
+						MinTextSize = 9,
+					}
+				),
+			}
+		);
+	end;
+end;
+exports.default = PropertyName;
+return exports;
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="4">
+          <Properties>
+            <string name="Name">stringType</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 3, 2020, 6:48 PM Eastern Standard Time
+
+local TS = require(script.Parent.Parent.Parent.include.RuntimeLib);
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local RoundedFrame = TS.import(script, script.Parent.Parent, "roundedFrame").default;
+local StringType;
+do
+	StringType = Roact.PureComponent:extend("StringType");
+	function StringType:render()
+		return Roact.createElement(
+			RoundedFrame,
+			{
+				SliceScale = 0.5,
+				Size = UDim2.new(1, 0, 0, self.props.Height),
+			}
+		);
+	end;
+end;
+exports.default = StringType;
+return exports;
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="ModuleScript" referent="5">
         <Properties>
           <string name="Name">app</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -73,11 +146,11 @@ return exports;
 ]]></string>
         </Properties>
       </Item>
-      <Item class="ModuleScript" referent="3">
+      <Item class="ModuleScript" referent="6">
         <Properties>
           <string name="Name">app.story</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports;
@@ -94,11 +167,11 @@ return exports;
 ]]></string>
         </Properties>
       </Item>
-      <Item class="ModuleScript" referent="4">
+      <Item class="ModuleScript" referent="7">
         <Properties>
           <string name="Name">card</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -127,22 +200,14 @@ do
 						Size = UDim2.new(0.35, 0, 0, textHeight),
 						Position = UDim2.new(0, paddingX, 0, paddingY),
 						BorderSizePixel = 0,
-						TextScaled = true,
+						TextSize = 14,
 						Text = "BEHAVIOR",
 						TextXAlignment = Enum.TextXAlignment.Left,
 						BackgroundTransparency = 1,
 						TextColor3 = Color3.fromRGB(222, 222, 222),
 						Font = Enum.Font.GothamSemibold,
 					},
-					{
-						Roact.createElement(
-							"UITextSizeConstraint",
-							{
-								MaxTextSize = 14,
-								MinTextSize = 8,
-							}
-						),
-					}
+					{}
 				),
 				Roact.createElement(
 					PropertiesList,
@@ -169,11 +234,11 @@ return exports;
 ]]></string>
         </Properties>
       </Item>
-      <Item class="ModuleScript" referent="5">
+      <Item class="ModuleScript" referent="8">
         <Properties>
           <string name="Name">list</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -202,15 +267,17 @@ return exports;
 ]]></string>
         </Properties>
       </Item>
-      <Item class="ModuleScript" referent="6">
+      <Item class="ModuleScript" referent="9">
         <Properties>
           <string name="Name">propertiesList</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:22 PM Eastern Standard Time
+-- February 3, 2020, 6:48 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local PropertyName = TS.import(script, script.Parent, "PropertyTypes", "propertyName").default;
+local StringType = TS.import(script, script.Parent, "PropertyTypes", "stringType").default;
 local Properties;
 do
 	Properties = Roact.PureComponent:extend("Properties");
@@ -223,18 +290,20 @@ do
 			while i < ROWSNUM do
 				rows[#rows + 1] = Roact.createElement(
 					"Frame",
-					{},
+					{
+						BackgroundTransparency = 1,
+					},
 					{
 						Roact.createElement(
-							"Frame",
+							PropertyName,
 							{
-								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+								Height = windowHeight / ROWSNUM,
 							}
 						),
 						Roact.createElement(
-							"Frame",
+							StringType,
 							{
-								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+								Height = windowHeight / ROWSNUM,
 							}
 						),
 					}
@@ -246,7 +315,7 @@ do
 			"Frame",
 			{
 				AnchorPoint = Vector2.new(0.5, 0),
-				Position = UDim2.new(0.5, 0, 0, self.props.TitlePadding.Y),
+				Position = UDim2.new(0.5, self.props.TitlePadding.X, 0, self.props.TitlePadding.Y),
 				Size = UDim2.new(1, 0, 0, windowHeight),
 				BackgroundTransparency = 1,
 			},
@@ -256,7 +325,7 @@ do
 						"UITableLayout",
 						{
 							FillDirection = Enum.FillDirection.Vertical,
-							HorizontalAlignment = Enum.HorizontalAlignment.Center,
+							HorizontalAlignment = Enum.HorizontalAlignment.Left,
 							VerticalAlignment = Enum.VerticalAlignment.Center,
 						}
 					),
@@ -271,12 +340,44 @@ return exports;
 ]]></string>
         </Properties>
       </Item>
+      <Item class="ModuleScript" referent="10">
+        <Properties>
+          <string name="Name">roundedFrame</string>
+          <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 3, 2020, 6:48 PM Eastern Standard Time
+
+local TS = require(script.Parent.Parent.include.RuntimeLib);
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local RoundedFrame;
+do
+	RoundedFrame = Roact.PureComponent:extend("RoundedFrame");
+	function RoundedFrame:render()
+		return Roact.createElement(
+			"ImageLabel",
+			TS.Roact_combine(
+				{
+					Image = "rbxassetid://2600845734",
+					ScaleType = Enum.ScaleType.Slice,
+					SliceCenter = Rect.new(64, 64, 64, 64),
+				},
+				self.props
+			),
+			self.props[Roact.Children]
+		);
+	end;
+end;
+exports.default = RoundedFrame;
+return exports;
+]]></string>
+        </Properties>
+      </Item>
     </Item>
-    <Item class="Folder" referent="7">
+    <Item class="Folder" referent="11">
       <Properties>
         <string name="Name">include</string>
       </Properties>
-      <Item class="ModuleScript" referent="8">
+      <Item class="ModuleScript" referent="12">
         <Properties>
           <string name="Name">Promise</string>
           <string name="Source"><![CDATA[--[[
@@ -860,7 +961,7 @@ return Promise
 ]]></string>
         </Properties>
       </Item>
-      <Item class="ModuleScript" referent="9">
+      <Item class="ModuleScript" referent="13">
         <Properties>
           <string name="Name">RuntimeLib</string>
           <string name="Source"><![CDATA[local Promise = require(script.Parent.Promise)
@@ -1838,19 +1939,19 @@ return TS
 ]]></string>
         </Properties>
       </Item>
-      <Item class="Folder" referent="10">
+      <Item class="Folder" referent="14">
         <Properties>
           <string name="Name">node_modules</string>
         </Properties>
-        <Item class="Folder" referent="11">
+        <Item class="Folder" referent="15">
           <Properties>
             <string name="Name">roact</string>
           </Properties>
-          <Item class="Folder" referent="12">
+          <Item class="Folder" referent="16">
             <Properties>
               <string name="Name">roact</string>
             </Properties>
-            <Item class="ModuleScript" referent="13">
+            <Item class="ModuleScript" referent="17">
               <Properties>
                 <string name="Name">src</string>
                 <string name="Source">--[[
@@ -1901,7 +2002,7 @@ local Roact = strict {
 
 return Roact</string>
               </Properties>
-              <Item class="ModuleScript" referent="14">
+              <Item class="ModuleScript" referent="18">
                 <Properties>
                   <string name="Name">Binding</string>
                   <string name="Source">local createSignal = require(script.Parent.createSignal)
@@ -2063,7 +2164,7 @@ end
 return BindingInternalApi</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="15">
+              <Item class="ModuleScript" referent="19">
                 <Properties>
                   <string name="Name">Component</string>
                   <string name="Source">local assign = require(script.Parent.assign)
@@ -2535,7 +2636,7 @@ end
 return Component</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="16">
+              <Item class="ModuleScript" referent="20">
                 <Properties>
                   <string name="Name">ComponentLifecyclePhase</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -2559,7 +2660,7 @@ local ComponentLifecyclePhase = strict({
 return ComponentLifecyclePhase</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="17">
+              <Item class="ModuleScript" referent="21">
                 <Properties>
                   <string name="Name">Config</string>
                   <string name="Source">--[[
@@ -2687,7 +2788,7 @@ end
 return Config</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="18">
+              <Item class="ModuleScript" referent="22">
                 <Properties>
                   <string name="Name">ElementKind</string>
                   <string name="Source">--[[
@@ -2743,7 +2844,7 @@ strict(ElementKindInternal, "ElementKind")
 return ElementKind</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="19">
+              <Item class="ModuleScript" referent="23">
                 <Properties>
                   <string name="Name">ElementUtils</string>
                   <string name="Source">local Type = require(script.Parent.Type)
@@ -2847,7 +2948,7 @@ end
 return ElementUtils</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="20">
+              <Item class="ModuleScript" referent="24">
                 <Properties>
                   <string name="Name">GlobalConfig</string>
                   <string name="Source">--[[
@@ -2859,7 +2960,7 @@ local Config = require(script.Parent.Config)
 return Config.new()</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="21">
+              <Item class="ModuleScript" referent="25">
                 <Properties>
                   <string name="Name">Logging</string>
                   <string name="Source">--[[
@@ -3023,7 +3124,7 @@ end
 return Logging</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="22">
+              <Item class="ModuleScript" referent="26">
                 <Properties>
                   <string name="Name">None</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -3035,7 +3136,7 @@ local None = Symbol.named("None")
 return None</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="23">
+              <Item class="ModuleScript" referent="27">
                 <Properties>
                   <string name="Name">NoopRenderer</string>
                   <string name="Source">--[[
@@ -3064,7 +3165,7 @@ end
 return NoopRenderer</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="24">
+              <Item class="ModuleScript" referent="28">
                 <Properties>
                   <string name="Name">Portal</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -3074,11 +3175,11 @@ local Portal = Symbol.named("Portal")
 return Portal</string>
                 </Properties>
               </Item>
-              <Item class="Folder" referent="25">
+              <Item class="Folder" referent="29">
                 <Properties>
                   <string name="Name">PropMarkers</string>
                 </Properties>
-                <Item class="ModuleScript" referent="26">
+                <Item class="ModuleScript" referent="30">
                   <Properties>
                     <string name="Name">Change</string>
                     <string name="Source"><![CDATA[--[[
@@ -3122,7 +3223,7 @@ return Change
 ]]></string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="27">
+                <Item class="ModuleScript" referent="31">
                   <Properties>
                     <string name="Name">Children</string>
                     <string name="Source">local Symbol = require(script.Parent.Parent.Symbol)
@@ -3132,7 +3233,7 @@ local Children = Symbol.named("Children")
 return Children</string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="28">
+                <Item class="ModuleScript" referent="32">
                   <Properties>
                     <string name="Name">Event</string>
                     <string name="Source"><![CDATA[--[[
@@ -3179,7 +3280,7 @@ return Event
 ]]></string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="29">
+                <Item class="ModuleScript" referent="33">
                   <Properties>
                     <string name="Name">Ref</string>
                     <string name="Source">local Symbol = require(script.Parent.Parent.Symbol)
@@ -3190,7 +3291,7 @@ return Ref</string>
                   </Properties>
                 </Item>
               </Item>
-              <Item class="ModuleScript" referent="30">
+              <Item class="ModuleScript" referent="34">
                 <Properties>
                   <string name="Name">PureComponent</string>
                   <string name="Source">--[[
@@ -3236,7 +3337,7 @@ end
 return PureComponent</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="31">
+              <Item class="ModuleScript" referent="35">
                 <Properties>
                   <string name="Name">RobloxRenderer</string>
                   <string name="Source"><![CDATA[--[[
@@ -3525,7 +3626,7 @@ return RobloxRenderer
 ]]></string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="32">
+              <Item class="ModuleScript" referent="36">
                 <Properties>
                   <string name="Name">SingleEventManager</string>
                   <string name="Source">--[[
@@ -3677,7 +3778,7 @@ end
 return SingleEventManager</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="33">
+              <Item class="ModuleScript" referent="37">
                 <Properties>
                   <string name="Name">Symbol</string>
                   <string name="Source">--[[
@@ -3712,7 +3813,7 @@ end
 return Symbol</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="34">
+              <Item class="ModuleScript" referent="38">
                 <Properties>
                   <string name="Name">Type</string>
                   <string name="Source">--[[
@@ -3765,7 +3866,7 @@ strict(TypeInternal, "Type")
 return Type</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="35">
+              <Item class="ModuleScript" referent="39">
                 <Properties>
                   <string name="Name">assertDeepEqual</string>
                   <string name="Source">--[[
@@ -3843,7 +3944,7 @@ end
 return assertDeepEqual</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="36">
+              <Item class="ModuleScript" referent="40">
                 <Properties>
                   <string name="Name">assign</string>
                   <string name="Source">local None = require(script.Parent.None)
@@ -3875,7 +3976,7 @@ end
 return assign</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="37">
+              <Item class="ModuleScript" referent="41">
                 <Properties>
                   <string name="Name">createElement</string>
                   <string name="Source">local Children = require(script.Parent.PropMarkers.Children)
@@ -3954,7 +4055,7 @@ end
 return createElement</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="38">
+              <Item class="ModuleScript" referent="42">
                 <Properties>
                   <string name="Name">createFragment</string>
                   <string name="Source">local ElementKind = require(script.Parent.ElementKind)
@@ -3971,7 +4072,7 @@ end
 return createFragment</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="39">
+              <Item class="ModuleScript" referent="43">
                 <Properties>
                   <string name="Name">createReconciler</string>
                   <string name="Source">local Type = require(script.Parent.Type)
@@ -4403,7 +4504,7 @@ end
 return createReconciler</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="40">
+              <Item class="ModuleScript" referent="44">
                 <Properties>
                   <string name="Name">createReconcilerCompat</string>
                   <string name="Source">--[[
@@ -4455,7 +4556,7 @@ end
 return createReconcilerCompat</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="41">
+              <Item class="ModuleScript" referent="45">
                 <Properties>
                   <string name="Name">createRef</string>
                   <string name="Source">--[[
@@ -4498,7 +4599,7 @@ end
 return createRef</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="42">
+              <Item class="ModuleScript" referent="46">
                 <Properties>
                   <string name="Name">createSignal</string>
                   <string name="Source">--[[
@@ -4578,7 +4679,7 @@ end
 return createSignal</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="43">
+              <Item class="ModuleScript" referent="47">
                 <Properties>
                   <string name="Name">createSpy</string>
                   <string name="Source">--[[
@@ -4668,7 +4769,7 @@ end
 return createSpy</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="44">
+              <Item class="ModuleScript" referent="48">
                 <Properties>
                   <string name="Name">getDefaultInstanceProperty</string>
                   <string name="Source">--[[
@@ -4727,7 +4828,7 @@ end
 return getDefaultInstanceProperty</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="45">
+              <Item class="ModuleScript" referent="49">
                 <Properties>
                   <string name="Name">internalAssert</string>
                   <string name="Source">local function internalAssert(condition, message)
@@ -4739,7 +4840,7 @@ end
 return internalAssert</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="46">
+              <Item class="ModuleScript" referent="50">
                 <Properties>
                   <string name="Name">invalidSetStateMessages</string>
                   <string name="Source">--[[
@@ -4788,7 +4889,7 @@ It was triggered by the component %q.
 return invalidSetStateMessages</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="47">
+              <Item class="ModuleScript" referent="51">
                 <Properties>
                   <string name="Name">oneChild</string>
                   <string name="Source">--[[
@@ -4821,7 +4922,7 @@ end
 return oneChild</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="48">
+              <Item class="ModuleScript" referent="52">
                 <Properties>
                   <string name="Name">strict</string>
                   <string name="Source">local function strict(t, name)

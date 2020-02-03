@@ -1,6 +1,7 @@
 import Roact from "@rbxts/roact";
 import List from "./list";
 import PropertyName from "./PropertyTypes/propertyName";
+import StringType from "./PropertyTypes/stringType";
 
 interface PropertiesProps {
 	TitlePadding: Vector2;
@@ -19,7 +20,7 @@ export default class Properties extends Roact.PureComponent<PropertiesProps> {
 			rows.push(
 				<frame BackgroundTransparency={1}>
 					<PropertyName Height={windowHeight / ROWSNUM} />
-					<frame Size={new UDim2(1, 0, 0, windowHeight / ROWSNUM)}></frame>
+					<StringType Height={windowHeight / ROWSNUM} />
 				</frame>,
 			);
 		}
