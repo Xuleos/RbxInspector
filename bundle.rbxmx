@@ -3,7 +3,7 @@
     <Properties>
       <string name="Name">roblox-ts-model</string>
       <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 2, 2020, 12:05 AM Eastern Standard Time
+-- February 3, 2020, 5:22 PM Eastern Standard Time
 
 local TS = require(script.include.RuntimeLib);
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
@@ -33,7 +33,7 @@ end);
         <Properties>
           <string name="Name">app</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 2, 2020, 12:05 AM Eastern Standard Time
+-- February 3, 2020, 5:22 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -76,52 +76,88 @@ return exports;
       <Item class="ModuleScript" referent="3">
         <Properties>
           <string name="Name">app.story</string>
-          <string name="Source">local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+          <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 3, 2020, 5:22 PM Eastern Standard Time
+
+local TS = require(script.Parent.Parent.include.RuntimeLib);
+local exports;
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
-
-return function(target)
-    local App = require(script.Parent.app)
-
-    local element = Roact.createElement(App.default, {},{})
-    local mount = Roact.mount(element, target)
-
-    return function()
-        Roact.unmount(mount)
-    end
-end</string>
+local app = TS.import(script, script).default;
+exports = function(target)
+	local element = Roact.createElement(app, {});
+	local mount = Roact.mount(element, target, "app");
+	return function()
+		Roact.unmount(mount);
+	end;
+end;
+return exports;
+]]></string>
         </Properties>
       </Item>
       <Item class="ModuleScript" referent="4">
         <Properties>
           <string name="Name">card</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 2, 2020, 12:05 AM Eastern Standard Time
+-- February 3, 2020, 5:22 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local PropertiesList = TS.import(script, script.Parent, "propertiesList").default;
+local HEIGHT = 200;
+local BORDER_SIZE = 2;
 local Card;
 do
 	Card = Roact.PureComponent:extend("Card");
 	function Card:render()
+		local paddingX = 8;
+		local paddingY = 11;
+		local textHeight = 20;
 		return Roact.createElement(
 			"Frame",
 			{
 				ZIndex = 2,
-				Size = UDim2.new(1, 0, 0, 200),
+				Size = UDim2.new(1, 0, 0, HEIGHT),
 				BackgroundTransparency = 1,
 			},
 			{
 				Roact.createElement(
 					"TextLabel",
 					{
-						Size = UDim2.new(0.6, 0, 0, 25),
-						Position = UDim2.new(0, 5, 0, 0),
+						Size = UDim2.new(0.35, 0, 0, textHeight),
+						Position = UDim2.new(0, paddingX, 0, paddingY),
 						BorderSizePixel = 0,
 						TextScaled = true,
+						Text = "BEHAVIOR",
 						TextXAlignment = Enum.TextXAlignment.Left,
 						BackgroundTransparency = 1,
 						TextColor3 = Color3.fromRGB(222, 222, 222),
+						Font = Enum.Font.GothamSemibold,
+					},
+					{
+						Roact.createElement(
+							"UITextSizeConstraint",
+							{
+								MaxTextSize = 14,
+								MinTextSize = 8,
+							}
+						),
+					}
+				),
+				Roact.createElement(
+					PropertiesList,
+					{
+						TitlePadding = Vector2.new(paddingX, paddingY + textHeight),
+						CardHeight = HEIGHT - BORDER_SIZE,
+					}
+				),
+				Roact.createElement(
+					"Frame",
+					{
+						Position = UDim2.new(0, 0, 0, HEIGHT - BORDER_SIZE),
+						Size = UDim2.new(1, 0, 0, BORDER_SIZE),
+						BackgroundColor3 = Color3.fromRGB(32, 32, 32),
+						BorderSizePixel = 0,
 					}
 				),
 			}
@@ -135,30 +171,9 @@ return exports;
       </Item>
       <Item class="ModuleScript" referent="5">
         <Properties>
-          <string name="Name">grid</string>
-          <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 2, 2020, 12:05 AM Eastern Standard Time
-
-local TS = require(script.Parent.Parent.include.RuntimeLib);
-local exports = {};
-local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
-local Grid;
-do
-	Grid = Roact.PureComponent:extend("Grid");
-	function Grid:render()
-		return nil;
-	end;
-end;
-exports.default = Grid;
-return exports;
-]]></string>
-        </Properties>
-      </Item>
-      <Item class="ModuleScript" referent="6">
-        <Properties>
           <string name="Name">list</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 2, 2020, 12:05 AM Eastern Standard Time
+-- February 3, 2020, 5:22 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -183,6 +198,75 @@ do
 	end;
 end;
 exports.default = List;
+return exports;
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="ModuleScript" referent="6">
+        <Properties>
+          <string name="Name">propertiesList</string>
+          <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
+-- February 3, 2020, 5:22 PM Eastern Standard Time
+
+local TS = require(script.Parent.Parent.include.RuntimeLib);
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local Properties;
+do
+	Properties = Roact.PureComponent:extend("Properties");
+	function Properties:render()
+		local windowHeight = self.props.CardHeight - self.props.TitlePadding.Y;
+		local ROWSNUM = 3;
+		local rows = {};
+		do
+			local i = 0;
+			while i < ROWSNUM do
+				rows[#rows + 1] = Roact.createElement(
+					"Frame",
+					{},
+					{
+						Roact.createElement(
+							"Frame",
+							{
+								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+							}
+						),
+						Roact.createElement(
+							"Frame",
+							{
+								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+							}
+						),
+					}
+				);
+				i = i + 1;
+			end;
+		end;
+		return Roact.createElement(
+			"Frame",
+			{
+				AnchorPoint = Vector2.new(0.5, 0),
+				Position = UDim2.new(0.5, 0, 0, self.props.TitlePadding.Y),
+				Size = UDim2.new(1, 0, 0, windowHeight),
+				BackgroundTransparency = 1,
+			},
+			TS.Roact_combine(
+				{
+					Roact.createElement(
+						"UITableLayout",
+						{
+							FillDirection = Enum.FillDirection.Vertical,
+							HorizontalAlignment = Enum.HorizontalAlignment.Center,
+							VerticalAlignment = Enum.VerticalAlignment.Center,
+						}
+					),
+				},
+				rows
+			)
+		);
+	end;
+end;
+exports.default = Properties;
 return exports;
 ]]></string>
         </Properties>
