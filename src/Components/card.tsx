@@ -16,15 +16,12 @@ export default class Card extends Roact.PureComponent<{}> {
 					Position={new UDim2(0, paddingX, 0, paddingY)}
 					BorderSizePixel={0}
 					TextSize={14}
-					//TextScaled={true}
 					Text={"BEHAVIOR"}
 					TextXAlignment={Enum.TextXAlignment.Left}
 					BackgroundTransparency={1}
 					TextColor3={Color3.fromRGB(222, 222, 222)}
 					Font={Enum.Font.GothamSemibold}
-				>
-					{/*<uitextsizeconstraint MaxTextSize={14} MinTextSize={12} />*/}
-				</textlabel>
+				/>
 
 				<PropertiesList
 					TitlePadding={new Vector2(paddingX, paddingY + textHeight)}
