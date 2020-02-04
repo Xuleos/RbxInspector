@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rbxtsc && rojo build --output bundle.rbxmx & cp -f bundle.rbxmx /mnt/c/Users/Evanc/AppData/Local/Roblox/Plugins/Inspector.rbxmx",
+    "build": "rbxtsc -r default.project.json && rojo build --output bundle.rbxmx default.project.json & cp -f bundle.rbxmx /mnt/c/Users/Evanc/AppData/Local/Roblox/Plugins/Inspector.rbxmx",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
