@@ -36,6 +36,7 @@ export default class Properties extends Roact.PureComponent<PropertiesProps> {
 					FillDirection={Enum.FillDirection.Vertical}
 					HorizontalAlignment={Enum.HorizontalAlignment.Left}
 					VerticalAlignment={Enum.VerticalAlignment.Center}
+					Padding={new UDim2(0, 0, 0, 5)}
 				/>
 				{rows}
 			</frame>
