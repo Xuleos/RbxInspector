@@ -10,6 +10,7 @@ export default class RoundedFrame extends Roact.PureComponent<RoundedFrameProps>
 	render() {
 		return (
 			<imagelabel
+				BackgroundTransparency={1}
 				Image="rbxassetid://2600845734"
 				ScaleType={Enum.ScaleType.Slice}
 				SliceCenter={new Rect(64, 64, 64, 64)}
