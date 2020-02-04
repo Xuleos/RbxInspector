@@ -3,7 +3,7 @@
     <Properties>
       <string name="Name">roblox-ts-model</string>
       <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.include.RuntimeLib);
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
@@ -37,7 +37,7 @@ end);
           <Properties>
             <string name="Name">propertyName</string>
             <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -77,7 +77,7 @@ return exports;
           <Properties>
             <string name="Name">stringType</string>
             <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -106,7 +106,7 @@ return exports;
         <Properties>
           <string name="Name">app</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -150,7 +150,7 @@ return exports;
         <Properties>
           <string name="Name">app.story</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports;
@@ -171,7 +171,7 @@ return exports;
         <Properties>
           <string name="Name">card</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -238,7 +238,7 @@ return exports;
         <Properties>
           <string name="Name">list</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -271,7 +271,7 @@ return exports;
         <Properties>
           <string name="Name">propertiesList</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
@@ -344,7 +344,7 @@ return exports;
         <Properties>
           <string name="Name">roundedFrame</string>
           <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 6:48 PM Eastern Standard Time
+-- February 3, 2020, 6:50 PM Eastern Standard Time
 
 local TS = require(script.Parent.Parent.include.RuntimeLib);
 local exports = {};
