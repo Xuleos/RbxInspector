@@ -5,6 +5,7 @@ interface CardBaseProps {
 	borderSize: number;
 	padding: Vector2;
 	textHeight: number;
+	textSize: number;
 }
 export default class CardBase extends Roact.PureComponent<CardBaseProps> {
 	render() {
@@ -16,7 +17,7 @@ export default class CardBase extends Roact.PureComponent<CardBaseProps> {
 					Size={new UDim2(0.35, 0, 0, this.props.textHeight)}
 					Position={new UDim2(0, paddingX, 0, paddingY)}
 					BorderSizePixel={0}
-					TextSize={14}
+					TextSize={this.props.textSize}
 					Text={"BEHAVIOR"}
 					TextXAlignment={Enum.TextXAlignment.Left}
 					BackgroundTransparency={1}
