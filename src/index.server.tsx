@@ -6,7 +6,7 @@ import App from "./Components/app";
 const widgetInfo = new DockWidgetPluginGuiInfo(Enum.InitialDockState.Right, false, false, 200, 200, 150, 150);
 
 const widget = plugin.CreateDockWidgetPluginGui("Inspector", widgetInfo);
-widget.Title = "Inspector";
+//widget.Title = "Inspector";
 
 const toolbar = plugin.CreateToolbar("Inspector");
 const button = toolbar.CreateButton("Inspector", "", "");
