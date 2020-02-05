@@ -21,6 +21,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
+    "@rbxts/dumpster": "^1.0.8",
     "@rbxts/roact": "^1.1.6"
   }
 }
