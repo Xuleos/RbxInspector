@@ -1,5 +1,5 @@
 import Roact from "@rbxts/roact";
-import app from "./app";
+import App from "./app";
 
 /**
  * Remember when hoarcekatting you gotta edit RuntimeLib
@@ -8,7 +8,7 @@ import app from "./app";
  **/
 
 export = (target: GuiObject) => {
-	const element = Roact.createElement(app, {});
+	const element = <App widget={target.FindFirstAncestorOfClass("DockWidgetPluginGui")!}></App>;
 
 	const mount = Roact.mount(element, target, "app");
 

@@ -5,20 +5,24 @@ import PropertyCard from "./BuiltInCards/propertyCard";
 
 const Selection = game.GetService("Selection");
 
+interface AppProps {
+	widget: DockWidgetPluginGui;
+}
+
 interface AppState {
 	Instance: Instance | undefined;
 }
-export default class App extends Roact.PureComponent<{}, AppState> {
+
+export default class App extends Roact.PureComponent<AppProps, AppState> {
 	dumpster: Dumpster;
-	constructor(p: {}) {
+	constructor(p: AppProps) {
 		super(p);
 		this.dumpster = new Dumpster();
-		this.setState({ Instance: undefined });
 	}
 	render(): Roact.Element {
 		const theme = settings().Studio.Theme;
 
-		const cards = this.state.Instance ? [<PropertyCard />] : [];
+		const cards = this.state.Instance ? [<PropertyCard widget={this.props.widget} />] : [];
 
 		return (
 			<frame
@@ -34,6 +38,8 @@ export default class App extends Roact.PureComponent<{}, AppState> {
 	}
 
 	didMount() {
+		this.setState({ Instance: Selection.Get()[0] });
+
 		this.dumpster.dump(
 			Selection.SelectionChanged.Connect(() => {
 				print("Selection changed");
