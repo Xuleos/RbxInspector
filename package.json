@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@rbxts/dumpster": "^1.0.8",
-    "@rbxts/roact": "^1.1.6"
+    "@rbxts/roact": "^1.1.6",
+    "@rbxts/services": "^1.0.3"
   }
 }

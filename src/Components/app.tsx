@@ -2,6 +2,7 @@ import Roact from "@rbxts/roact";
 import { Dumpster } from "@rbxts/dumpster";
 import List from "./list";
 import PropertyCard from "./BuiltInCards/propertyCard";
+import { getAPIDump } from "APIDump/RobloxAPI";
 
 const Selection = game.GetService("Selection");
 
