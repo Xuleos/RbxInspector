@@ -12,30 +12,34 @@ export = class PropertyCard extends Roact.PureComponent<Runner.CardProps> {
 	}
 
 	render() {
-		const rowNum = 15;
-		const rowSize = 30;
+		const ROW_NUM = 15;
+		const ROW_SIZE = 30;
+		const ROW_PADDING = 5;
 
 		const PADDING = new Vector2(8, 11);
-		const TEXTHEIGHT = 20;
-		const TextSize = 14;
-		const HEIGHT = rowNum * rowSize + rowNum * 5 + TEXTHEIGHT + PADDING.Y;
+		const TEXT_HEIGHT = 20;
+		const TEXT_SIZE = 14;
 		const BORDER_SIZE = 2;
 
-		//const TitlePadding = PADDING.add(new Vector2(0, 20)).add(new Vector2(0, 20));
+		const listHeight = ROW_NUM * ROW_SIZE + ROW_NUM * ROW_PADDING;
+		const cardHeight = listHeight + TEXT_HEIGHT + PADDING.Y;
+
 		return (
 			<CardBase
-				Height={HEIGHT}
+				Height={cardHeight}
 				padding={PADDING}
 				borderSize={BORDER_SIZE}
-				textHeight={TEXTHEIGHT}
-				textSize={TextSize}
+				textHeight={TEXT_HEIGHT}
+				textSize={TEXT_SIZE}
 			>
 				<PropertiesList
-					TitlePadding={toScale(PADDING, this.props.widget)}
-					CardHeight={HEIGHT - BORDER_SIZE}
-					RowSize={rowSize}
-					Rows={rowNum}
-					Offset={TextSize - BORDER_SIZE}
+					TitlePadding={PADDING}
+					CardHeight={cardHeight - BORDER_SIZE}
+					RowSize={ROW_SIZE}
+					Rows={ROW_NUM}
+					RowPadding={ROW_PADDING}
+					Offset={TEXT_SIZE - BORDER_SIZE}
+					Height={listHeight}
 				></PropertiesList>
 			</CardBase>
 		);

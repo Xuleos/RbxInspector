@@ -1,5 +1,4 @@
 import Roact from "@rbxts/roact";
-import List from "./list";
 import PropertyName from "./PropertyTypes/propertyName";
 import StringType from "./PropertyTypes/stringType";
 
@@ -8,7 +7,9 @@ interface PropertiesProps {
 	CardHeight: number;
 	RowSize: number;
 	Rows: number;
+	RowPadding: number;
 	Offset: number;
+	Height: number;
 }
 
 export default class Properties extends Roact.PureComponent<PropertiesProps> {
@@ -17,28 +18,33 @@ export default class Properties extends Roact.PureComponent<PropertiesProps> {
 
 		const rows: Array<Roact.Element> = [];
 
+		const ROW_LIST_PADDING = 60;
+
 		for (let i = 0; i < ROWSNUM; i++) {
 			rows.push(
-				<frame BackgroundTransparency={1}>
-					<PropertyName Height={this.props.RowSize} />
-					<StringType Height={this.props.RowSize} />
+				<frame BackgroundTransparency={1} Size={new UDim2(1, 0, 0, this.props.RowSize)}>
+					<uilistlayout
+						FillDirection={Enum.FillDirection.Horizontal}
+						Padding={new UDim(0, ROW_LIST_PADDING)}
+					/>
+					<PropertyName Height={this.props.RowSize} RowListPadding={ROW_LIST_PADDING} />
+					<StringType Height={this.props.RowSize} RowListPadding={ROW_LIST_PADDING} />
 				</frame>,
 			);
 		}
 
 		return (
-			//get 12 by subtracting text size by border size
 			<frame
 				AnchorPoint={new Vector2(0.5, 0.5)}
-				Position={new UDim2(0.5 + this.props.TitlePadding.X, 0, 0.5, this.props.Offset)}
-				Size={new UDim2(1, 0, 0, this.props.RowSize * this.props.Rows + this.props.Rows * 5)}
+				Position={new UDim2(0.5, this.props.TitlePadding.X, 0.5, this.props.Offset)}
+				Size={new UDim2(1, 0, 0, this.props.Height)}
 				BackgroundTransparency={1}
 			>
-				<uitablelayout
+				<uilistlayout
 					FillDirection={Enum.FillDirection.Vertical}
 					HorizontalAlignment={Enum.HorizontalAlignment.Left}
 					VerticalAlignment={Enum.VerticalAlignment.Center}
-					Padding={new UDim2(0, 0, 0, 5)}
+					Padding={new UDim(0, this.props.RowPadding)}
 				/>
 				{rows}
 			</frame>

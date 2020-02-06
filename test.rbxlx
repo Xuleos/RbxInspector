@@ -667,8 +667,8 @@ function TS.getModule(object, moduleName)
 	end
 
 	-- ensure modules have fully replicated
-	if not __LEMUR__ and RunService:IsClient() and not isPlugin(object) and not game:IsLoaded() then
-		--game.Loaded:Wait()
+	if not __LEMUR__ and RunService:IsRunning() and RunService:IsClient() and not isPlugin(object) and not game:IsLoaded() then
+		game.Loaded:Wait()
 	end
 
 	local globalModules = script.Parent:FindFirstChild("node_modules")
@@ -733,7 +733,7 @@ function TS.import(caller, module, ...)
 
 	if not registeredLibraries[module] then
 		if _G[module] then
-			warn("Invalid module access! Do you have two TS runtimes trying to import this? " .. module:GetFullName(), 2)
+			error("Invalid module access! Do you have two TS runtimes trying to import this? " .. module:GetFullName(), 2)
 		end
 
 		_G[module] = TS
@@ -798,16 +798,45 @@ function TS.async(callback)
 	end
 end
 
+function TS.generator(c)
+	c = coroutine.create(c)
+
+	local o = {
+		next = function(...)
+			if coroutine.status(c) == "dead" then
+				return { done = true }
+			else
+				local success, value = coroutine.resume(c, ...)
+				if success == false then error(value, 2) end
+				return { value = value, done = coroutine.status(c) == "dead" }
+			end
+		end
+	}
+
+	o[TS.Symbol_iterator] = function() return o end
+
+	return o
+end
+
+local function package(...)
+	return select("#", ...), {...}
+end
+
 function TS.await(promise)
 	if not Promise.is(promise) then
 		return promise
 	end
 
-	local ok, result = promise:await()
+	local size, result = package(promise:await())
+	local ok = table.remove(result, 1)
 	if ok then
-		return result
+		if size > 2 then
+			return result
+		else
+			return result[1]
+		end
 	else
-		error(ok == nil and "The awaited Promise was cancelled" or result, 2)
+		error(ok == nil and "The awaited Promise was cancelled" or (size > 2 and result[1] or result), 2)
 	end
 end
 
@@ -1388,6 +1417,8 @@ function TS.map_new(pairs)
 	return result
 end
 
+TS.Object_fromEntries = TS.map_new
+
 function TS.map_clear(map)
 	for key in pairs(map) do
 		map[key] = nil
@@ -1497,6 +1528,36 @@ TS.set_size = getNumKeys
 
 TS.set_toString = toString
 
+function TS.string_startsWith(str1, str2, pos)
+	local n1 = #str1
+	local n2 = #str2
+
+	if pos == nil or pos ~= pos then
+		pos = 0
+	else
+		pos = math.clamp(pos, 0, n1)
+	end
+
+	local last = pos + n2;
+	return last <= n1 and string.sub(str1, pos + 1, last) == str2
+end
+
+function TS.string_endsWith(str1, str2, pos)
+	local n1 = #str1
+	local n2 = #str2
+
+	if pos == nil then
+		pos = n1
+	elseif pos ~= pos then
+		pos = 0
+	else
+		pos = math.clamp(pos, 0, n1)
+	end
+
+	local start = pos - n2 + 1;
+	return start > 0 and string.sub(str1, start, pos) == str2
+end
+
 -- spread cache functions
 function TS.string_spread(str)
 	local results = {}
@@ -1517,10 +1578,6 @@ function TS.iterableCache(iter)
 		results[count] = _0.value
 	end
 	return results
-end
-
-local function package(...)
-	return select("#", ...), {...}
 end
 
 function TS.iterableFunctionCache(iter)
@@ -1581,13 +1638,278 @@ return TS
         </Properties>
         <Item class="Folder" referent="6">
           <Properties>
+            <string name="Name">dumpster</string>
+          </Properties>
+          <Item class="ModuleScript" referent="7">
+            <Properties>
+              <string name="Name">Dumpster</string>
+              <string name="Source"><![CDATA[local DESTROY_METHODS = { "destroy", "Destroy", "Disconnect" }
+
+local Dumpster = {} do
+	Dumpster.__index = Dumpster
+
+	local finalizers = {
+		["function"] = function(item)
+			item()
+		end,
+		["Instance"] = function(item)
+			item:Destroy()
+		end,
+		["RBXScriptConnection"] = function(item)
+			item:Disconnect()
+		end,
+		["table"] = function(item)
+			for _, methodName in ipairs(DESTROY_METHODS) do
+				if item[methodName] then
+					item[methodName](item)
+				end
+			end
+		end
+	}
+
+	function Dumpster.new()
+		return setmetatable({}, Dumpster)
+	end
+
+	function Dumpster:dump(item, finalizer)
+		self[item] = finalizer or finalizers[typeof(item)]
+		return self
+	end
+
+	function Dumpster:burn()
+		local item, finalizer = next(self)
+		while item ~= nil do
+			finalizer(item)
+			self[item] = nil
+			item, finalizer = next(self)
+		end
+	end
+
+	Dumpster.destroy = Dumpster.burn
+end
+
+return {
+	Dumpster = Dumpster
+}
+]]></string>
+            </Properties>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="8">
+          <Properties>
             <string name="Name">roact</string>
           </Properties>
-          <Item class="Folder" referent="7">
+          <Item class="Folder" referent="9">
             <Properties>
               <string name="Name">roact</string>
             </Properties>
-            <Item class="ModuleScript" referent="8">
+            <Item class="StringValue" referent="10">
+              <Properties>
+                <string name="Name">LICENSE</string>
+                <string name="Value"><![CDATA[                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.]]></string>
+              </Properties>
+            </Item>
+            <Item class="ModuleScript" referent="11">
               <Properties>
                 <string name="Name">src</string>
                 <string name="Source">--[[
@@ -1638,7 +1960,7 @@ local Roact = strict {
 
 return Roact</string>
               </Properties>
-              <Item class="ModuleScript" referent="9">
+              <Item class="ModuleScript" referent="12">
                 <Properties>
                   <string name="Name">Binding</string>
                   <string name="Source">local createSignal = require(script.Parent.createSignal)
@@ -1800,7 +2122,7 @@ end
 return BindingInternalApi</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="10">
+              <Item class="ModuleScript" referent="13">
                 <Properties>
                   <string name="Name">Component</string>
                   <string name="Source">local assign = require(script.Parent.assign)
@@ -2272,7 +2594,7 @@ end
 return Component</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="11">
+              <Item class="ModuleScript" referent="14">
                 <Properties>
                   <string name="Name">ComponentLifecyclePhase</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -2296,7 +2618,7 @@ local ComponentLifecyclePhase = strict({
 return ComponentLifecyclePhase</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="12">
+              <Item class="ModuleScript" referent="15">
                 <Properties>
                   <string name="Name">Config</string>
                   <string name="Source">--[[
@@ -2424,7 +2746,7 @@ end
 return Config</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="13">
+              <Item class="ModuleScript" referent="16">
                 <Properties>
                   <string name="Name">ElementKind</string>
                   <string name="Source">--[[
@@ -2480,7 +2802,7 @@ strict(ElementKindInternal, "ElementKind")
 return ElementKind</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="14">
+              <Item class="ModuleScript" referent="17">
                 <Properties>
                   <string name="Name">ElementUtils</string>
                   <string name="Source">local Type = require(script.Parent.Type)
@@ -2584,7 +2906,7 @@ end
 return ElementUtils</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="15">
+              <Item class="ModuleScript" referent="18">
                 <Properties>
                   <string name="Name">GlobalConfig</string>
                   <string name="Source">--[[
@@ -2596,7 +2918,7 @@ local Config = require(script.Parent.Config)
 return Config.new()</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="16">
+              <Item class="ModuleScript" referent="19">
                 <Properties>
                   <string name="Name">Logging</string>
                   <string name="Source">--[[
@@ -2760,7 +3082,7 @@ end
 return Logging</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="17">
+              <Item class="ModuleScript" referent="20">
                 <Properties>
                   <string name="Name">None</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -2772,7 +3094,7 @@ local None = Symbol.named("None")
 return None</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="18">
+              <Item class="ModuleScript" referent="21">
                 <Properties>
                   <string name="Name">NoopRenderer</string>
                   <string name="Source">--[[
@@ -2801,7 +3123,7 @@ end
 return NoopRenderer</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="19">
+              <Item class="ModuleScript" referent="22">
                 <Properties>
                   <string name="Name">Portal</string>
                   <string name="Source">local Symbol = require(script.Parent.Symbol)
@@ -2811,11 +3133,11 @@ local Portal = Symbol.named("Portal")
 return Portal</string>
                 </Properties>
               </Item>
-              <Item class="Folder" referent="20">
+              <Item class="Folder" referent="23">
                 <Properties>
                   <string name="Name">PropMarkers</string>
                 </Properties>
-                <Item class="ModuleScript" referent="21">
+                <Item class="ModuleScript" referent="24">
                   <Properties>
                     <string name="Name">Change</string>
                     <string name="Source"><![CDATA[--[[
@@ -2859,7 +3181,7 @@ return Change
 ]]></string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="22">
+                <Item class="ModuleScript" referent="25">
                   <Properties>
                     <string name="Name">Children</string>
                     <string name="Source">local Symbol = require(script.Parent.Parent.Symbol)
@@ -2869,7 +3191,7 @@ local Children = Symbol.named("Children")
 return Children</string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="23">
+                <Item class="ModuleScript" referent="26">
                   <Properties>
                     <string name="Name">Event</string>
                     <string name="Source"><![CDATA[--[[
@@ -2916,7 +3238,7 @@ return Event
 ]]></string>
                   </Properties>
                 </Item>
-                <Item class="ModuleScript" referent="24">
+                <Item class="ModuleScript" referent="27">
                   <Properties>
                     <string name="Name">Ref</string>
                     <string name="Source">local Symbol = require(script.Parent.Parent.Symbol)
@@ -2927,7 +3249,7 @@ return Ref</string>
                   </Properties>
                 </Item>
               </Item>
-              <Item class="ModuleScript" referent="25">
+              <Item class="ModuleScript" referent="28">
                 <Properties>
                   <string name="Name">PureComponent</string>
                   <string name="Source">--[[
@@ -2973,7 +3295,7 @@ end
 return PureComponent</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="26">
+              <Item class="ModuleScript" referent="29">
                 <Properties>
                   <string name="Name">RobloxRenderer</string>
                   <string name="Source"><![CDATA[--[[
@@ -3262,7 +3584,7 @@ return RobloxRenderer
 ]]></string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="27">
+              <Item class="ModuleScript" referent="30">
                 <Properties>
                   <string name="Name">SingleEventManager</string>
                   <string name="Source">--[[
@@ -3414,7 +3736,7 @@ end
 return SingleEventManager</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="28">
+              <Item class="ModuleScript" referent="31">
                 <Properties>
                   <string name="Name">Symbol</string>
                   <string name="Source">--[[
@@ -3449,7 +3771,7 @@ end
 return Symbol</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="29">
+              <Item class="ModuleScript" referent="32">
                 <Properties>
                   <string name="Name">Type</string>
                   <string name="Source">--[[
@@ -3502,7 +3824,7 @@ strict(TypeInternal, "Type")
 return Type</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="30">
+              <Item class="ModuleScript" referent="33">
                 <Properties>
                   <string name="Name">assertDeepEqual</string>
                   <string name="Source">--[[
@@ -3580,7 +3902,7 @@ end
 return assertDeepEqual</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="31">
+              <Item class="ModuleScript" referent="34">
                 <Properties>
                   <string name="Name">assign</string>
                   <string name="Source">local None = require(script.Parent.None)
@@ -3612,7 +3934,7 @@ end
 return assign</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="32">
+              <Item class="ModuleScript" referent="35">
                 <Properties>
                   <string name="Name">createElement</string>
                   <string name="Source">local Children = require(script.Parent.PropMarkers.Children)
@@ -3691,7 +4013,7 @@ end
 return createElement</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="33">
+              <Item class="ModuleScript" referent="36">
                 <Properties>
                   <string name="Name">createFragment</string>
                   <string name="Source">local ElementKind = require(script.Parent.ElementKind)
@@ -3708,7 +4030,7 @@ end
 return createFragment</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="34">
+              <Item class="ModuleScript" referent="37">
                 <Properties>
                   <string name="Name">createReconciler</string>
                   <string name="Source">local Type = require(script.Parent.Type)
@@ -4140,7 +4462,7 @@ end
 return createReconciler</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="35">
+              <Item class="ModuleScript" referent="38">
                 <Properties>
                   <string name="Name">createReconcilerCompat</string>
                   <string name="Source">--[[
@@ -4192,7 +4514,7 @@ end
 return createReconcilerCompat</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="36">
+              <Item class="ModuleScript" referent="39">
                 <Properties>
                   <string name="Name">createRef</string>
                   <string name="Source">--[[
@@ -4235,7 +4557,7 @@ end
 return createRef</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="37">
+              <Item class="ModuleScript" referent="40">
                 <Properties>
                   <string name="Name">createSignal</string>
                   <string name="Source">--[[
@@ -4315,7 +4637,7 @@ end
 return createSignal</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="38">
+              <Item class="ModuleScript" referent="41">
                 <Properties>
                   <string name="Name">createSpy</string>
                   <string name="Source">--[[
@@ -4405,7 +4727,7 @@ end
 return createSpy</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="39">
+              <Item class="ModuleScript" referent="42">
                 <Properties>
                   <string name="Name">getDefaultInstanceProperty</string>
                   <string name="Source">--[[
@@ -4464,7 +4786,7 @@ end
 return getDefaultInstanceProperty</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="40">
+              <Item class="ModuleScript" referent="43">
                 <Properties>
                   <string name="Name">internalAssert</string>
                   <string name="Source">local function internalAssert(condition, message)
@@ -4476,7 +4798,7 @@ end
 return internalAssert</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="41">
+              <Item class="ModuleScript" referent="44">
                 <Properties>
                   <string name="Name">invalidSetStateMessages</string>
                   <string name="Source">--[[
@@ -4525,7 +4847,7 @@ It was triggered by the component %q.
 return invalidSetStateMessages</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="42">
+              <Item class="ModuleScript" referent="45">
                 <Properties>
                   <string name="Name">oneChild</string>
                   <string name="Source">--[[
@@ -4558,7 +4880,7 @@ end
 return oneChild</string>
                 </Properties>
               </Item>
-              <Item class="ModuleScript" referent="43">
+              <Item class="ModuleScript" referent="46">
                 <Properties>
                   <string name="Name">strict</string>
                   <string name="Source">local function strict(t, name)
@@ -4593,18 +4915,33 @@ return strict</string>
             </Item>
           </Item>
         </Item>
+        <Item class="Folder" referent="47">
+          <Properties>
+            <string name="Name">types</string>
+          </Properties>
+          <Item class="Folder" referent="48">
+            <Properties>
+              <string name="Name">include</string>
+            </Properties>
+            <Item class="Folder" referent="49">
+              <Properties>
+                <string name="Name">generated</string>
+              </Properties>
+            </Item>
+          </Item>
+        </Item>
       </Item>
     </Item>
   </Item>
-  <Item class="ServerScriptService" referent="44">
+  <Item class="ServerScriptService" referent="50">
     <Properties>
       <string name="Name">ServerScriptService</string>
     </Properties>
-    <Item class="Script" referent="45">
+    <Item class="Script" referent="51">
       <Properties>
         <string name="Name">TS</string>
-        <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:21 PM Eastern Standard Time
+        <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
@@ -4614,7 +4951,12 @@ local widget = plugin:CreateDockWidgetPluginGui("Inspector", widgetInfo);
 widget.Title = "Inspector";
 local toolbar = plugin:CreateToolbar("Inspector");
 local button = toolbar:CreateButton("Inspector", "", "");
-local tree = Roact.createElement(App);
+local tree = Roact.createElement(
+	App,
+	{
+		widget = widget,
+	}
+);
 local mount;
 button.Click:Connect(function()
 	widget.Enabled = not (widget.Enabled);
@@ -4626,26 +4968,176 @@ button.Click:Connect(function()
 end);
 ]]></string>
       </Properties>
-      <Item class="Folder" referent="46">
+      <Item class="Folder" referent="52">
         <Properties>
           <string name="Name">Components</string>
         </Properties>
-        <Item class="ModuleScript" referent="47">
+        <Item class="Folder" referent="53">
           <Properties>
-            <string name="Name">app</string>
-            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:21 PM Eastern Standard Time
+            <string name="Name">BuiltInCards</string>
+          </Properties>
+          <Item class="ModuleScript" referent="54">
+            <Properties>
+              <string name="Name">propertyCard</string>
+              <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local exports;
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local Runner = TS.import(script, game:GetService("ServerScriptService"), "TS", "runner");
+local toScale = TS.import(script, game:GetService("ServerScriptService"), "TS", "util", "scaleUtil").toScale;
+local CardBase = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "cardBase").default;
+local PropertiesList = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "propertiesList").default;
+local _0;
+do
+	local PropertyCard = Roact.PureComponent:extend("PropertyCard");
+	function PropertyCard:init(p)
+	end;
+	function PropertyCard:render()
+		local rowNum = 15;
+		local rowSize = 30;
+		local PADDING = Vector2.new(8, 11);
+		local TEXTHEIGHT = 20;
+		local TextSize = 14;
+		local HEIGHT = rowNum * rowSize + rowNum * 5 + TEXTHEIGHT + PADDING.Y;
+		local BORDER_SIZE = 2;
+		return Roact.createElement(
+			CardBase,
+			{
+				Height = HEIGHT,
+				padding = PADDING,
+				borderSize = BORDER_SIZE,
+				textHeight = TEXTHEIGHT,
+				textSize = TextSize,
+			},
+			{
+				Roact.createElement(
+					PropertiesList,
+					{
+						TitlePadding = toScale(PADDING, self.props.widget),
+						CardHeight = HEIGHT - BORDER_SIZE,
+						RowSize = rowSize,
+						Rows = rowNum,
+						Offset = TextSize - BORDER_SIZE,
+					}
+				),
+			}
+		);
+	end;
+	_0 = PropertyCard;
+end;
+exports = _0;
+return exports;
+]]></string>
+            </Properties>
+          </Item>
+        </Item>
+        <Item class="Folder" referent="55">
+          <Properties>
+            <string name="Name">PropertyTypes</string>
+          </Properties>
+          <Item class="ModuleScript" referent="56">
+            <Properties>
+              <string name="Name">propertyName</string>
+              <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local PropertyName;
+do
+	PropertyName = Roact.PureComponent:extend("PropertyName");
+	function PropertyName:render()
+		return Roact.createElement(
+			"TextLabel",
+			{
+				Size = UDim2.new(0, 100, 0, self.props.Height),
+				Text = "Property",
+				TextScaled = true,
+				TextColor3 = Color3.fromRGB(185, 185, 185),
+				BackgroundTransparency = 1,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			},
+			{
+				Roact.createElement(
+					"UITextSizeConstraint",
+					{
+						MaxTextSize = 9,
+						MinTextSize = 9,
+					}
+				),
+			}
+		);
+	end;
+end;
+exports.default = PropertyName;
+return exports;
+]]></string>
+            </Properties>
+          </Item>
+          <Item class="ModuleScript" referent="57">
+            <Properties>
+              <string name="Name">stringType</string>
+              <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local RoundedFrame = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "roundedFrame").default;
+local StringType;
+do
+	StringType = Roact.PureComponent:extend("StringType");
+	function StringType:render()
+		return Roact.createElement(
+			RoundedFrame,
+			{
+				SliceScale = 0.5,
+				Size = UDim2.new(0.7, 0, 0, self.props.Height),
+			}
+		);
+	end;
+end;
+exports.default = StringType;
+return exports;
+]]></string>
+            </Properties>
+          </Item>
+        </Item>
+        <Item class="ModuleScript" referent="58">
+          <Properties>
+            <string name="Name">app</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local Dumpster = TS.import(script, TS.getModule(script, "dumpster").Dumpster).Dumpster;
 local List = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "list").default;
-local Card = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "card").default;
+local PropertyCard = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "BuiltInCards", "propertyCard");
+local Selection = game:GetService("Selection");
 local App;
 do
 	App = Roact.PureComponent:extend("App");
+	function App:init(p)
+		self.dumpster = Dumpster.new();
+	end;
 	function App:render()
 		local theme = settings().Studio.Theme;
+		local cards;
+		if self.state.Instance then
+			cards = { Roact.createElement(
+				PropertyCard,
+				{
+					widget = self.props.widget,
+				}
+			) };
+		else
+			cards = {};
+		end;
 		return Roact.createElement(
 			"Frame",
 			{
@@ -4659,14 +5151,24 @@ do
 				Roact.createElement(
 					List,
 					{},
-					{
-						Roact.createElement(Card),
-						Roact.createElement(Card),
-						Roact.createElement(Card),
-					}
+					cards
 				),
 			}
 		);
+	end;
+	function App:didMount()
+		self:setState({
+			Instance = Selection:Get()[1];
+		});
+		self.dumpster:dump(Selection.SelectionChanged:Connect(function()
+			print("Selection changed");
+			self:setState({
+				Instance = Selection:Get()[1];
+			});
+		end));
+	end;
+	function App:willUnmount()
+		self.dumpster:burn();
 	end;
 end;
 exports.default = App;
@@ -4674,18 +5176,23 @@ return exports;
 ]]></string>
           </Properties>
         </Item>
-        <Item class="ModuleScript" referent="48">
+        <Item class="ModuleScript" referent="59">
           <Properties>
             <string name="Name">app.story</string>
-            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:21 PM Eastern Standard Time
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports;
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
-local app = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "app").default;
+local App = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "app").default;
 exports = function(target)
-	local element = Roact.createElement(app, {});
+	local element = Roact.createElement(
+		App,
+		{
+			widget = target:FindFirstAncestorOfClass("DockWidgetPluginGui"),
+		}
+	);
 	local mount = Roact.mount(element, target, "app");
 	return function()
 		Roact.unmount(mount);
@@ -4695,86 +5202,71 @@ return exports;
 ]]></string>
           </Properties>
         </Item>
-        <Item class="ModuleScript" referent="49">
+        <Item class="ModuleScript" referent="60">
           <Properties>
-            <string name="Name">card</string>
-            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:21 PM Eastern Standard Time
+            <string name="Name">cardBase</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
-local PropertiesList = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "propertiesList").default;
-local HEIGHT = 200;
-local BORDER_SIZE = 2;
-local Card;
+local CardBase;
 do
-	Card = Roact.PureComponent:extend("Card");
-	function Card:render()
-		local paddingX = 8;
-		local paddingY = 11;
-		local textHeight = 20;
+	CardBase = Roact.PureComponent:extend("CardBase");
+	function CardBase:render()
+		local paddingX = self.props.padding.X;
+		local paddingY = self.props.padding.Y;
 		return Roact.createElement(
 			"Frame",
 			{
 				ZIndex = 2,
-				Size = UDim2.new(1, 0, 0, HEIGHT),
+				Size = UDim2.new(1, 0, 0, self.props.Height),
 				BackgroundTransparency = 1,
 			},
-			{
-				Roact.createElement(
-					"TextLabel",
-					{
-						Size = UDim2.new(0.35, 0, 0, textHeight),
-						Position = UDim2.new(0, paddingX, 0, paddingY),
-						BorderSizePixel = 0,
-						TextScaled = true,
-						Text = "BEHAVIOR",
-						TextXAlignment = Enum.TextXAlignment.Left,
-						BackgroundTransparency = 1,
-						TextColor3 = Color3.fromRGB(222, 222, 222),
-						Font = Enum.Font.GothamSemibold,
-					},
-					{
-						Roact.createElement(
-							"UITextSizeConstraint",
-							{
-								MaxTextSize = 14,
-								MinTextSize = 8,
-							}
-						),
-					}
-				),
-				Roact.createElement(
-					PropertiesList,
-					{
-						TitlePadding = Vector2.new(paddingX, paddingY + textHeight),
-						CardHeight = HEIGHT - BORDER_SIZE,
-					}
-				),
-				Roact.createElement(
-					"Frame",
-					{
-						Position = UDim2.new(0, 0, 0, HEIGHT - BORDER_SIZE),
-						Size = UDim2.new(1, 0, 0, BORDER_SIZE),
-						BackgroundColor3 = Color3.fromRGB(32, 32, 32),
-						BorderSizePixel = 0,
-					}
-				),
-			}
+			TS.Roact_combine(
+				{
+					Roact.createElement(
+						"TextLabel",
+						{
+							Size = UDim2.new(0.35, 0, 0, self.props.textHeight),
+							Position = UDim2.new(0, paddingX, 0, paddingY),
+							BorderSizePixel = 0,
+							TextSize = self.props.textSize,
+							Text = "BEHAVIOR",
+							TextXAlignment = Enum.TextXAlignment.Left,
+							BackgroundTransparency = 1,
+							TextColor3 = Color3.fromRGB(222, 222, 222),
+							Font = Enum.Font.GothamSemibold,
+						}
+					),
+				},
+				self.props[Roact.Children],
+				{
+					Roact.createElement(
+						"Frame",
+						{
+							Position = UDim2.new(0, 0, 0, self.props.Height - self.props.borderSize),
+							Size = UDim2.new(1, 0, 0, self.props.borderSize),
+							BackgroundColor3 = Color3.fromRGB(32, 32, 32),
+							BorderSizePixel = 0,
+						}
+					),
+				}
+			)
 		);
 	end;
 end;
-exports.default = Card;
+exports.default = CardBase;
 return exports;
 ]]></string>
           </Properties>
         </Item>
-        <Item class="ModuleScript" referent="50">
+        <Item class="ModuleScript" referent="61">
           <Properties>
             <string name="Name">list</string>
-            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 4:41 PM Eastern Standard Time
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
@@ -4803,39 +5295,42 @@ return exports;
 ]]></string>
           </Properties>
         </Item>
-        <Item class="ModuleScript" referent="51">
+        <Item class="ModuleScript" referent="62">
           <Properties>
             <string name="Name">propertiesList</string>
-            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.0
--- February 3, 2020, 5:21 PM Eastern Standard Time
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
 
 local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
 local exports = {};
 local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local PropertyName = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "PropertyTypes", "propertyName").default;
+local StringType = TS.import(script, game:GetService("ServerScriptService"), "TS", "Components", "PropertyTypes", "stringType").default;
 local Properties;
 do
 	Properties = Roact.PureComponent:extend("Properties");
 	function Properties:render()
-		local windowHeight = self.props.CardHeight - self.props.TitlePadding.Y;
-		local ROWSNUM = 3;
+		local ROWSNUM = self.props.Rows;
 		local rows = {};
 		do
 			local i = 0;
 			while i < ROWSNUM do
 				rows[#rows + 1] = Roact.createElement(
 					"Frame",
-					{},
+					{
+						BackgroundTransparency = 1,
+					},
 					{
 						Roact.createElement(
-							"Frame",
+							PropertyName,
 							{
-								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+								Height = self.props.RowSize,
 							}
 						),
 						Roact.createElement(
-							"Frame",
+							StringType,
 							{
-								Size = UDim2.new(0.5, 0, 0, windowHeight / ROWSNUM),
+								Height = self.props.RowSize,
 							}
 						),
 					}
@@ -4846,9 +5341,9 @@ do
 		return Roact.createElement(
 			"Frame",
 			{
-				AnchorPoint = Vector2.new(0.5, 0),
-				Position = UDim2.new(0.5, 0, 0, self.props.TitlePadding.Y),
-				Size = UDim2.new(1, 0, 0, windowHeight),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.new(0.5 + self.props.TitlePadding.X, 0, 0.5, self.props.Offset),
+				Size = UDim2.new(1, 0, 0, self.props.RowSize * self.props.Rows + self.props.Rows * 5),
 				BackgroundTransparency = 1,
 			},
 			TS.Roact_combine(
@@ -4857,8 +5352,9 @@ do
 						"UITableLayout",
 						{
 							FillDirection = Enum.FillDirection.Vertical,
-							HorizontalAlignment = Enum.HorizontalAlignment.Center,
+							HorizontalAlignment = Enum.HorizontalAlignment.Left,
 							VerticalAlignment = Enum.VerticalAlignment.Center,
+							Padding = UDim2.new(0, 0, 0, 5),
 						}
 					),
 				},
@@ -4868,6 +5364,71 @@ do
 	end;
 end;
 exports.default = Properties;
+return exports;
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="63">
+          <Properties>
+            <string name="Name">roundedFrame</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local exports = {};
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+local RoundedFrame;
+do
+	RoundedFrame = Roact.PureComponent:extend("RoundedFrame");
+	function RoundedFrame:render()
+		return Roact.createElement(
+			"ImageLabel",
+			TS.Roact_combine(
+				{
+					BackgroundTransparency = 1,
+					Image = "rbxassetid://2600845734",
+					ScaleType = Enum.ScaleType.Slice,
+					SliceCenter = Rect.new(64, 64, 64, 64),
+				},
+				self.props
+			),
+			self.props[Roact.Children]
+		);
+	end;
+end;
+exports.default = RoundedFrame;
+return exports;
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="ModuleScript" referent="64">
+        <Properties>
+          <string name="Name">runner</string>
+          <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local TS = require(game:GetService("ReplicatedStorage"):WaitForChild("include"):WaitForChild("RuntimeLib"));
+local Roact = TS.import(script, TS.getModule(script, "roact").roact.src);
+return nil;
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="Folder" referent="65">
+        <Properties>
+          <string name="Name">util</string>
+        </Properties>
+        <Item class="ModuleScript" referent="66">
+          <Properties>
+            <string name="Name">scaleUtil</string>
+            <string name="Source"><![CDATA[-- Compiled with https://roblox-ts.github.io v0.3.1
+-- February 5, 2020, 4:31 PM Eastern Standard Time
+
+local exports = {};
+local function toScale(offset, widget)
+	return (offset / (widget.AbsoluteSize));
+end;
+exports.toScale = toScale;
 return exports;
 ]]></string>
           </Properties>
