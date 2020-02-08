@@ -1,14 +1,25 @@
 import Roact from "@rbxts/roact";
 import App from "./app";
 
-/**
- * Remember when hoarcekatting you gotta edit RuntimeLib
- * so it doesn't yield for game to load
- * turn the invalid module access error to warning
- **/
+class FakePlugin {
+	Settings: unknown = undefined;
+
+	getSettings() {
+		return this.Settings;
+	}
+
+	setSettings<T>(newSettings: T) {
+		this.Settings = newSettings;
+	}
+}
 
 export = (target: GuiObject) => {
-	const element = <App widget={target.FindFirstAncestorOfClass("DockWidgetPluginGui")!}></App>;
+	const element = (
+		<App
+			widget={target.FindFirstAncestorOfClass("DockWidgetPluginGui")!}
+			plugin={(FakePlugin as unknown) as Plugin}
+		></App>
+	);
 
 	const mount = Roact.mount(element, target, "app");
 

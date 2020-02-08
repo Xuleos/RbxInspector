@@ -1,19 +1,15 @@
 import { HttpService } from "@rbxts/services";
-
-const CACHE_DURATION = 7 * 86400;
-
-interface APIDump {
+import t from "@rbxts/t";
+export interface APIDump {
 	Classes: Array<{}>;
 }
 
-interface Settings {
-	lastCacheTime: number;
-	APIDump: APIDump;
-}
+const APIDumpInterface = t.interface({
+	Classes: t.table,
+});
 
-//TODO: better type safety here
-function isPluginSettings(cacheSetting: unknown): cacheSetting is Settings {
-	return typeOf(cacheSetting) === "table";
+export function checkAPIDump(decodedAPIDump: unknown): decodedAPIDump is APIDump {
+	return APIDumpInterface(decodedAPIDump);
 }
 
 export async function fetchAPIDump(): Promise<APIDump> {
@@ -21,32 +17,12 @@ export async function fetchAPIDump(): Promise<APIDump> {
 		"https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/API-Dump.json",
 	);
 
-	//Really weird @rbxts/types auto generated bug
-	return HttpService.JSONDecode(rawAPIDump) as APIDump;
-}
+	const decoded = HttpService.JSONDecode(rawAPIDump);
 
-export async function getAPIDump(HoarceKat?: boolean): Promise<APIDump> {
-	//If HoarceKat is enabled, we should avoid using plugin global
-
-	const pluginSettings = plugin.GetSetting("RbxInspector");
-
-	if (isPluginSettings(pluginSettings)) {
-		if (tick() - pluginSettings.lastCacheTime >= CACHE_DURATION) {
-			pluginSettings.lastCacheTime = tick();
-
-			const rawAPIDump = await fetchAPIDump();
-
-			pluginSettings.APIDump = rawAPIDump;
-
-			plugin.SetSetting("RbxInspector", pluginSettings);
-
-			return rawAPIDump;
-		} else {
-			return pluginSettings.APIDump;
-		}
+	//! Runtime type checking might be too slow here
+	if (checkAPIDump(decoded)) {
+		return decoded;
 	} else {
-		error(
-			"RbxInspector plugin settings are in an incorrect format. If you see this, please forward it to the developer",
-		);
+		error("APIDump failed quick check");
 	}
 }

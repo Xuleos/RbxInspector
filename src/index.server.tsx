@@ -11,7 +11,7 @@ widget.Title = "Inspector";
 const toolbar = plugin.CreateToolbar("Inspector");
 const button = toolbar.CreateButton("Inspector", "", "");
 
-const tree = <App widget={widget} />;
+const tree = <App widget={widget} plugin={plugin} />;
 
 let mount: Roact.ComponentInstanceHandle;
 
